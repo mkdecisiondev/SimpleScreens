@@ -92,7 +92,7 @@ along with this software (see the LICENSE.md file). If not, see
 </#macro>
 
 <#if sri.getRenderMode() == "vuet" || sri.getRenderMode() == "html">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" type="text/javascript"></script>
 </#if>
 
 <div class="row">
