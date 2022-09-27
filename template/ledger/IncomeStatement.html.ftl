@@ -211,7 +211,7 @@ along with this software (see the LICENSE.md file). If not, see
 </div>
 
 <#if showCharts>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" type="text/javascript"></script>
     <div class="row" style="margin-top:12px;">
     <#if (timePeriodIdList?size > 1) && topExpenseByTimePeriod['ALL']?has_content>
         <#assign topExpenseList = topExpenseByTimePeriod['ALL']>
