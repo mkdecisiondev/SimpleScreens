@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-This software is in the public domain under CC0 1.0 Universal plus a 
+This software is in the public domain under CC0 1.0 Universal plus a
 Grant of Patent License.
 
 To the extent possible under law, the author(s) have dedicated all
@@ -13,7 +13,7 @@ along with this software (see the LICENSE.md file). If not, see
 <http://creativecommons.org/publicdomain/zero/1.0/>.
 -->
 <screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-2.1.xsd"
+        xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-3.xsd"
         default-menu-title="Time" default-menu-index="1">
 
     <parameter name="workEffortId" required="true"/>
@@ -77,10 +77,11 @@ along with this software (see the LICENSE.md file). If not, see
             </field>
             <field name="partyId"><default-field title="Worker">
                 <drop-down no-current-selected-key="${ec.user.userAccount.partyId}" current="selected">
-                    <entity-options key="${partyId}" text="${firstName} ${lastName} (${partyId})">
-                        <entity-find entity-name="WorkEffortPartyAndPerson">
+                    <entity-options key="${partyId}" text="${firstName ? firstName + ' ' + lastName : (organizationName ?: pseudoId)} (${partyId})">
+                        <entity-find entity-name="WorkEffortAndPartyDetail">
                             <date-filter/>
                             <econdition field-name="workEffortId"/>
+                            <select-field field-name="firstName, lastName, organizationName, pseudoId, partyId"/>
                         </entity-find>
                     </entity-options>
                 </drop-down>
