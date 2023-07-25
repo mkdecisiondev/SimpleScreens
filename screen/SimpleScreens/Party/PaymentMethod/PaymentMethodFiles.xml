@@ -19,15 +19,7 @@ along with this software (see the LICENSE.md file). If not, see
     <parameter name="paymentMethodFileId"/>
 
     <transition name="findPayment"><default-response url="//${appRoot}/Accounting/Payment/FindPayment"/></transition>
-    <transition name="generateNachaFile"><actions>
-        <entity-find entity-name="mantle.account.method.PaymentMethod" list="paymentMethodList">
-            <econdition field-name="ownerPartyId" from="partyId"/>
-            <econdition field-name="paymentMethodTypeEnumId" value="PmtBankAccount"/>
-        </entity-find>
-        <service-call name="mantle.account.NachaServices.generate#NachaFileBatch" in-map="context">
-            <field-map field-name="paymentMethodIdList" from="paymentMethodList*.paymentMethodId"/>
-        </service-call>
-    </actions>
+    <transition name="generateNachaFile"><service-call name="mantle.account.NachaServices.generate#NachaFileWithCreditAndDebitBatches"/>
         <default-response url="."/></transition>
     <transition name="generatePosPayFile"><service-call name="mantle.account.PositivePayServices.generate#PositivePayFile"/>
         <default-response url="."/></transition>
