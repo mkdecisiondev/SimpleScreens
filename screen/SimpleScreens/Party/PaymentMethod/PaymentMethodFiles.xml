@@ -143,7 +143,10 @@ along with this software (see the LICENSE.md file). If not, see
                 </conditional-field>
             </field>
             <field name="downloadButton"><header-field title="Find"><submit/></header-field>
-                <default-field title=""><link url="downloadFileText" text="Download File ${paymentMethodFileId}"/></default-field></field>
+                <default-field title="">
+                    <link url="../../NachaViewer?paymentMethodFileId=${paymentMethodFileId}" text="View File"/>
+                    <link url="downloadFileText" text="Download File ${paymentMethodFileId}"/>
+                </default-field></field>
         </form-list>
     </widgets>
 </screen>
