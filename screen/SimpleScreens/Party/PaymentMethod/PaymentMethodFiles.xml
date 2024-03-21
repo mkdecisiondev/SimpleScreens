@@ -55,6 +55,10 @@ along with this software (see the LICENSE.md file). If not, see
                     <field name="paymentMethodId"><default-field><hidden/></default-field></field>
                     <field name="fromDate"><default-field><date-time/></default-field></field>
                     <field name="thruDate"><default-field><date-time/></default-field></field>
+                    <field name="lineEndingType"><default-field tooltip="Choose the type of line ending character(s) after each 94 character record you need">
+                        <radio no-current-selected-key="Unix">
+                            <option key="Windows" text="Windows (CR LF)"/><option key="Unix" text="Unix (LF only)"/></radio>
+                    </default-field></field>
                     <field name="fileDate" from="ec.user.nowTimestamp"><default-field><date-time/></default-field></field>
                     <field name="effectiveEntryDate"><default-field tooltip="Transaction settle/post date. Defaults to next week day after File Date.">
                         <date-time type="date"/></default-field></field>
