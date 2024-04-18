@@ -21,6 +21,8 @@ along with this software (see the LICENSE.md file). If not, see
     <transition name="findPayment"><default-response url="//${appRoot}/Accounting/Payment/FindPayment"/></transition>
     <transition name="generateNachaFile"><service-call name="mantle.account.NachaServices.generate#NachaFileWithCreditAndDebitBatches"/>
         <default-response url="."/></transition>
+    <transition name="autoGenerateNachaFile">
+        <default-response url="."/></transition>
     <transition name="generatePosPayFile"><service-call name="mantle.account.PositivePayServices.generate#PositivePayFile"/>
         <default-response url="."/></transition>
     <transition name="sendSystemMessage"><service-call name="mantle.account.PaymentMethodServices.produce#PaymentMethodFileSystemMessage"/>
@@ -78,6 +80,23 @@ along with this software (see the LICENSE.md file). If not, see
                     </default-field></field>
                     -->
                     <field name="submitButton"><default-field title="Generate"><submit/></default-field></field>
+                </form-single>
+            </container-dialog>
+            <container-dialog id="AutoGenerateNACHAFiles" button-text="Auto-Generate NACHA Files">
+                <form-single name="AutoGenerateNACHAFiles" transition="autoGenerateNachaFile">
+                    <field name="paymentMethodId"><default-field><hidden/></default-field></field>
+                    <field name="enableAutoGeneration"><default-field>
+                        <radio no-current-selected-key="${'N'.equals(bankAccount.nachaAddNewLine) ? 'false' : 'true'}">
+                            <option key="false" text="No"/><option key="true" text="Yes"/></radio>
+                    </default-field></field>
+<!--                    <field name="enableAutoGen"><default-field title="Enable Auto-Generate NACHA"><drop-down>-->
+<!--                        <option key="Y"/>-->
+<!--                        <option key="N"/>-->
+<!--                    </drop-down></default-field></field>-->
+                    <field name="timeOfDay" from="ec.user.nowTimestamp"><default-field><date-time type="time"/></default-field></field>
+<!--                    <field name="timeOfDay2"><default-field tooltip="Time of day">-->
+<!--                        <text-line input-type="time"/></default-field></field>-->
+                    <field name="submitButton"><default-field title="Schedule"><submit/></default-field></field>
                 </form-single>
             </container-dialog>
         </widgets></section>
