@@ -22,6 +22,39 @@ along with this software (see the LICENSE.md file). If not, see
     <transition name="generateNachaFile"><service-call name="mantle.account.NachaServices.generate#NachaFileWithCreditAndDebitBatches"/>
         <default-response url="."/></transition>
     <transition name="autoGenerateNachaFile">
+        <parameter name="timeOfDay" required="true"/>
+        <actions>
+            <set field="parsedTime"/> <!-- used to modify cron expression based on time entered by user -->
+            <script><![CDATA[
+                import org.moqui.context.NotificationMessage
+
+                boolean isValidTime
+
+                try {
+                    parsedTime = java.time.LocalTime.parse(timeOfDay)
+                    isValidTime = true
+                } catch (Exception e) {
+                    isValidTime = false
+                }
+
+                if (!isValidTime) {
+                    ec.message.addMessage("Invalid time entered. Please enter a valid time in HH:mm format.", NotificationMessage.Warning)
+                    return
+                }
+            ]]></script>
+
+            <service-call name="update#moqui.service.job.ServiceJob">
+                <field-map field-name="jobName" value="generate_NachaFile"/>
+                <field-map field-name="cronExpression" value="${parsedTime.getMinute()} ${parsedTime.getHour()} * * * ?"/>
+                <field-map field-name="paused" from="enableAutoGeneration == 'true' ? 'N' : 'Y'"/>
+            </service-call>
+
+            <service-call name="update#moqui.service.job.ServiceJobParameter">
+                <field-map field-name="jobName" value="generate_NachaFile"/>
+                <field-map field-name="parameterName" value="paymentMethodId"/>
+                <field-map field-name="parameterValue" from="paymentMethodId"/>
+            </service-call>
+        </actions>
         <default-response url="."/></transition>
     <transition name="generatePosPayFile"><service-call name="mantle.account.PositivePayServices.generate#PositivePayFile"/>
         <default-response url="."/></transition>
@@ -48,6 +81,12 @@ along with this software (see the LICENSE.md file). If not, see
             <field-map field-name="partyId" from="paymentMethod?.ownerPartyId"/>
             <field-map field-name="roleTypeId" value="OrgInternal"/>
         </entity-find-one>
+
+        <!-- retrieve the service job to run NACHA File generation automatically -->
+        <entity-find-one entity-name="moqui.service.job.ServiceJob" value-field="autogenNachaJob">
+            <field-map field-name="jobName" value="generate_NachaFile"/>
+        </entity-find-one>
+
         <if condition="ownerOrgRole == null"><return error="true" message="Files only available for payment methods owned by an Internal Organization"/></if>
     </actions>
     <widgets>
@@ -57,10 +96,6 @@ along with this software (see the LICENSE.md file). If not, see
                     <field name="paymentMethodId"><default-field><hidden/></default-field></field>
                     <field name="fromDate"><default-field><date-time/></default-field></field>
                     <field name="thruDate"><default-field><date-time/></default-field></field>
-                    <field name="lineEndingType"><default-field tooltip="Choose the type of line ending character(s) after each 94 character record you need">
-                        <radio no-current-selected-key="Unix">
-                            <option key="Windows" text="Windows (CR LF)"/><option key="Unix" text="Unix (LF only)"/></radio>
-                    </default-field></field>
                     <field name="fileDate" from="ec.user.nowTimestamp"><default-field><date-time/></default-field></field>
                     <field name="effectiveEntryDate"><default-field tooltip="Transaction settle/post date. Defaults to next week day after File Date.">
                         <date-time type="date"/></default-field></field>
@@ -82,20 +117,14 @@ along with this software (see the LICENSE.md file). If not, see
                     <field name="submitButton"><default-field title="Generate"><submit/></default-field></field>
                 </form-single>
             </container-dialog>
-            <container-dialog id="AutoGenerateNACHAFiles" button-text="Auto-Generate NACHA Files">
+            <container-dialog id="AutoGenerateNACHAFiles" condition="autogenNachaJob" button-text="Auto-Generate NACHA Files">
                 <form-single name="AutoGenerateNACHAFiles" transition="autoGenerateNachaFile">
                     <field name="paymentMethodId"><default-field><hidden/></default-field></field>
                     <field name="enableAutoGeneration"><default-field>
-                        <radio no-current-selected-key="${'N'.equals(bankAccount.nachaAddNewLine) ? 'false' : 'true'}">
+                        <radio no-current-selected-key="${autogenNachaJob?.paused == 'N' ? 'true' : 'false'}">
                             <option key="false" text="No"/><option key="true" text="Yes"/></radio>
                     </default-field></field>
-<!--                    <field name="enableAutoGen"><default-field title="Enable Auto-Generate NACHA"><drop-down>-->
-<!--                        <option key="Y"/>-->
-<!--                        <option key="N"/>-->
-<!--                    </drop-down></default-field></field>-->
                     <field name="timeOfDay" from="ec.user.nowTimestamp"><default-field><date-time type="time"/></default-field></field>
-<!--                    <field name="timeOfDay2"><default-field tooltip="Time of day">-->
-<!--                        <text-line input-type="time"/></default-field></field>-->
                     <field name="submitButton"><default-field title="Schedule"><submit/></default-field></field>
                 </form-single>
             </container-dialog>
