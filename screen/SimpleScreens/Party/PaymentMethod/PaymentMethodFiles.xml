@@ -45,7 +45,7 @@ along with this software (see the LICENSE.md file). If not, see
 
             <service-call name="update#moqui.service.job.ServiceJob">
                 <field-map field-name="jobName" value="generate_NachaFile"/>
-                <field-map field-name="cronExpression" value="${parsedTime.getMinute()} ${parsedTime.getHour()} * * * ?"/>
+                <field-map field-name="cronExpression" value="0 ${parsedTime.getMinute()} ${parsedTime.getHour()} * * ?"/>
                 <field-map field-name="paused" from="enableAutoGeneration == 'true' ? 'N' : 'Y'"/>
             </service-call>
 
@@ -87,6 +87,8 @@ along with this software (see the LICENSE.md file). If not, see
             <field-map field-name="jobName" value="generate_NachaFile"/>
         </entity-find-one>
 
+        <set field="timeOfDay" from="ec.l10n.format(ec.user.nowTimestamp, 'HH:mm')"/>
+
         <if condition="ownerOrgRole == null"><return error="true" message="Files only available for payment methods owned by an Internal Organization"/></if>
     </actions>
     <widgets>
@@ -124,7 +126,7 @@ along with this software (see the LICENSE.md file). If not, see
                         <radio no-current-selected-key="${autogenNachaJob?.paused == 'N' ? 'true' : 'false'}">
                             <option key="false" text="No"/><option key="true" text="Yes"/></radio>
                     </default-field></field>
-                    <field name="timeOfDay" from="ec.user.nowTimestamp"><default-field><date-time type="time"/></default-field></field>
+                    <field name="timeOfDay"><default-field title="Generation Time"><date-time type="time"/><label text="${ec.user.timeZone.ID}"/></default-field></field>
                     <field name="submitButton"><default-field title="Schedule"><submit/></default-field></field>
                 </form-single>
             </container-dialog>
