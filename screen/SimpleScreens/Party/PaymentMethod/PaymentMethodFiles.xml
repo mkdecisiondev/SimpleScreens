@@ -128,7 +128,7 @@ along with this software (see the LICENSE.md file). If not, see
                     </default-field></field>
                     <field name="timeOfDay"><default-field title="Generation Time"><date-time type="time"/></default-field></field>
                     <field name="timeZoneLabel"><default-field title="Time Zone"><label text="${ec.user.timeZone.ID}"/></default-field></field>
-                    <field name="submitButton"><default-field title="Schedule"><submit/></default-field></field>
+                    <field name="submitButton"><default-field title="Submit"><submit/></default-field></field>
                     <!-- field-layout organizes the fields above so that the timezone shows next to the time input text box -->
                     <field-layout>
                         <field-row>
