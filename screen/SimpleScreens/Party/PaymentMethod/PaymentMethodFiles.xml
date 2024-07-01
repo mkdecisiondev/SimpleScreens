@@ -19,7 +19,7 @@ along with this software (see the LICENSE.md file). If not, see
     <parameter name="paymentMethodFileId"/>
 
     <transition name="findPayment"><default-response url="//${appRoot}/Accounting/Payment/FindPayment"/></transition>
-    <transition name="generateNachaFile"><service-call name="mantle.account.NachaServices.generate#NachaFileWithCreditAndDebitBatches"/>
+    <transition name="generateNachaFile"><service-call name="mk.account.NachaServices.generate#NachaFileWithCreditAndDebitBatches"/>
         <default-response url="."/></transition>
     <transition name="autoGenerateNachaFile">
         <parameter name="timeOfDay" required="true"/>
